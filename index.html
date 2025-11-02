@@ -5,45 +5,101 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title id="t">Transparency</title>
 <style>
-  body{font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;background:#0f0f10;color:#f3f3f3}
-  main{max-width:860px;margin:0 auto;padding:24px}
-  h1{font-size:2.2rem;line-height:1.15;margin:12px 0 16px}
-  h2{margin:18px 0 10px}
-  p{font-size:1.1rem;line-height:1.6;margin:0 0 14px}
-  a{color:#a9c7ff;text-decoration:underline}
-  .hr{height:1px;background:#2a2a2a;margin:20px 0}
-  .lang{font-size:.95rem;opacity:.9;margin-bottom:8px}
-  .lang a{margin-right:10px}
-  
-  .gallery{
+  body {
+    font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
+    margin:0;
+    background:#0f0f10;
+    color:#f3f3f3;
+  }
+  main {
+    max-width:860px;
+    margin:0 auto;
+    padding:24px;
+  }
+  h1 {
+    font-size:2.2rem;
+    line-height:1.15;
+    margin:12px 0 16px;
+  }
+  h2 {
+    margin:18px 0 10px;
+  }
+  p {
+    font-size:1.1rem;
+    line-height:1.6;
+    margin:0 0 14px;
+  }
+  a {
+    color:#a9c7ff;
+    text-decoration:underline;
+  }
+  .hr {
+    height:1px;
+    background:#2a2a2a;
+    margin:20px 0;
+  }
+  .lang {
+    font-size:.95rem;
+    opacity:.9;
+    margin-bottom:8px;
+  }
+  .lang a {
+    margin-right:10px;
+  }
+
+  /* Галерия - адаптивна мозайка */
+  .gallery {
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:10px;
     margin:18px 0 32px;
   }
-  .gallery img{
+  @media (max-width:640px) {
+    .gallery { grid-template-columns:repeat(2,1fr); }
+  }
+  @media (min-width:1100px) {
+    .gallery { grid-template-columns:repeat(4,1fr); }
+  }
+
+  .gallery img {
     width:100%;
     height:100%;
-    aspect-ratio:4/3;      /* еднакви плочки */
-    object-fit:cover;       /* кроп към 4:3 */
+    aspect-ratio:4/3;
+    object-fit:cover;
     border-radius:8px;
     display:block;
     background:#1b1b1b;
+    cursor:zoom-in;
   }
-  
-  .lb{
-    position:fixed; inset:0;
+
+  /* Lightbox */
+  .lb {
+    position:fixed;
+    inset:0;
     background:rgba(0,0,0,.9);
-    display:none; align-items:center; justify-content:center;
-    padding:16px; z-index:9999;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:16px;
+    z-index:9999;
   }
-  .lb.show{display:flex}
-  .lb img{max-width:96vw; max-height:90vh; border-radius:10px}
-  .lb .close{
-    position:fixed; top:10px; right:16px; font-size:32px; cursor:pointer; color:#fff;
+  .lb.show {
+    display:flex;
+    cursor:zoom-out;
   }
-
-
+  .lb img {
+    max-width:96vw;
+    max-height:90vh;
+    border-radius:10px;
+  }
+  .lb .close {
+    position:fixed;
+    top:10px;
+    right:16px;
+    font-size:32px;
+    cursor:pointer;
+    color:#fff;
+  }
 </style>
 </head>
 <body>
@@ -82,7 +138,7 @@
     .then(tr=>{
       document.documentElement.lang = lang;
       document.title = tr.meta_title;
-      t.textContent = tr.meta_title; // optional
+      document.getElementById('t').textContent = tr.meta_title;
       h1.textContent = tr.h1;
       p1.textContent = tr.p1;
       p2.textContent = tr.p2;
@@ -100,7 +156,7 @@
     "IMG_1828.jpeg","IMG_1832.jpeg","IMG_1834.jpeg","IMG_1839.jpeg",
     "IMG_1841.jpeg","IMG_1843.jpeg","IMG_1844.jpeg","IMG_1845.jpeg","IMG_1846.jpeg"
   ];
-  
+
   const gal = document.getElementById('gal');
   imgs.forEach(name=>{
     const a = document.createElement('a');
@@ -121,24 +177,20 @@
   document.body.appendChild(lb);
   const lbImg = lb.querySelector('img');
 
-// отваряне при клик на плочка
-gal.addEventListener('click', (e)=>{
-  const a = e.target.closest('a');
-  if(!a) return;
-  e.preventDefault();
-  lbImg.src = a.dataset.full;
-  lb.classList.add('show');
-});
+  // отваряне при клик на плочка
+  gal.addEventListener('click', (e)=>{
+    const a = e.target.closest('a');
+    if(!a) return;
+    e.preventDefault();
+    lbImg.src = a.dataset.full;
+    lb.classList.add('show');
+  });
 
-// затваряне при клик/escape
-lb.addEventListener('click', ()=> lb.classList.remove('show'));
-document.addEventListener('keydown', (e)=>{
-  if(e.key === 'Escape') lb.classList.remove('show');
-});
-
-  
-  
-  
+  // затваряне при клик или Escape
+  lb.addEventListener('click', ()=> lb.classList.remove('show'));
+  document.addEventListener('keydown', (e)=>{
+    if(e.key === 'Escape') lb.classList.remove('show');
+  });
 </script>
 </body>
 </html>
