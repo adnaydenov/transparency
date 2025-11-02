@@ -2,111 +2,52 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title id="t">Transparency</title>
 <style>
-  body {
+  html{ -webkit-text-size-adjust:100% !important; text-size-adjust:100% !important; }
+  body{
     font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
-    margin:0;
-    background:#0f0f10;
-    color:#f3f3f3;
+    margin:0; background:#0f0f10; color:#f3f3f3;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
   }
-  main {
-    max-width:860px;
-    margin:0 auto;
-    padding:24px;
-  }
-  h1 {
-    font-size:2.2rem;
-    line-height:1.15;
-    margin:12px 0 16px;
-  }
-  h2 {
-    margin:18px 0 10px;
-  }
-  p {
-    font-size:1.1rem;
-    line-height:1.6;
-    margin:0 0 14px;
-  }
-  a {
-    color:#a9c7ff;
-    text-decoration:underline;
-  }
-  .hr {
-    height:1px;
-    background:#2a2a2a;
-    margin:20px 0;
-  }
-  .lang {
-    font-size:.95rem;
-    opacity:.9;
-    margin-bottom:8px;
-  }
-  .lang a {
-    margin-right:10px;
-  }
+  main{ max-width:860px; margin:0 auto; padding:24px }
+  h1{ font-size:2.2rem; line-height:1.15; margin:12px 0 16px }
+  h2{ margin:18px 0 10px }
+  p{ font-size:1.1rem; line-height:1.6; margin:0 0 14px }
+  a{ color:#a9c7ff; text-decoration:underline }
+  .hr{ height:1px; background:#2a2a2a; margin:20px 0 }
+  .lang{ font-size:.95rem; opacity:.9; margin-bottom:8px }
+  .lang a{ margin-right:10px }
 
-  /* Галерия - адаптивна мозайка */
-  .gallery {
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:10px;
-    margin:18px 0 32px;
-  }
-  @media (max-width:640px) {
-    .gallery { grid-template-columns:repeat(2,1fr); }
-  }
-  @media (min-width:1100px) {
-    .gallery { grid-template-columns:repeat(4,1fr); }
-  }
+  /* Галерия – еднакви прагове на всички езици */
+  .gallery{ display:grid; gap:10px; margin:18px 0 32px; grid-template-columns:repeat(1,1fr) }
+  @media (min-width:640px){ .gallery{ grid-template-columns:repeat(2,1fr) } }
+  @media (min-width:720px){ .gallery{ grid-template-columns:repeat(3,1fr) } }
+  @media (min-width:1100px){ .gallery{ grid-template-columns:repeat(4,1fr) } }
 
-  .gallery img {
-    width:100%;
-    height:100%;
-    aspect-ratio:4/3;
-    object-fit:cover;
-    border-radius:8px;
-    display:block;
-    background:#1b1b1b;
-    cursor:zoom-in;
+  .gallery img{
+    width:100%; height:100%;
+    aspect-ratio:4/3; object-fit:cover;
+    border-radius:8px; display:block;
+    background:#1b1b1b; cursor:zoom-in;
   }
 
   /* Lightbox */
-  .lb {
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,.9);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    padding:16px;
-    z-index:9999;
+  .lb{
+    position:fixed; inset:0; background:rgba(0,0,0,.9);
+    display:none; align-items:center; justify-content:center;
+    padding:16px; z-index:9999;
   }
-  .lb.show {
-    display:flex;
-    cursor:zoom-out;
-  }
-  .lb img {
-    max-width:96vw;
-    max-height:90vh;
-    border-radius:10px;
-  }
-  .lb .close {
-    position:fixed;
-    top:10px;
-    right:16px;
-    font-size:32px;
-    cursor:pointer;
-    color:#fff;
-  }
+  .lb.show{ display:flex; cursor:zoom-out }
+  .lb img{ max-width:96vw; max-height:90vh; border-radius:10px }
 </style>
 </head>
 <body>
 <main>
   <div class="lang">
-    <a href="?lang=en">English</a>
-    <a href="?lang=bg">Български</a>
+    <a href="?lang=en&v=4">English</a>
+    <a href="?lang=bg&v=4">Български</a>
   </div>
 
   <h1 id="h1"></h1>
@@ -125,15 +66,15 @@
 </main>
 
 <script>
-  // 1) Определи език: ?lang=bg|en -> иначе детектира от браузъра
+  // Език: ?lang=bg|en → иначе авто детекция
   const qp = new URLSearchParams(location.search);
   let lang = (qp.get('lang')||'').toLowerCase();
   if(!['bg','en'].includes(lang)){
     lang = (navigator.language||'en').toLowerCase().startsWith('bg') ? 'bg' : 'en';
   }
 
-  // 2) Зареди съответния JSON с текстове
-  fetch(`lang/${lang}.json`)
+  // Текстове (кеш-бъстър v=4)
+  fetch(`lang/${lang}.json?v=4`)
     .then(r=>r.json())
     .then(tr=>{
       document.documentElement.lang = lang;
@@ -146,51 +87,37 @@
       p3.textContent = tr.p3;
       p4.textContent = tr.p4;
       const a = document.getElementById('cta');
-      a.textContent = tr.cta_text;
-      a.href = tr.cta_url;
+      a.textContent = tr.cta_text; a.href = tr.cta_url;
     });
 
-  // 3) Генерирай галерия от списък с файлове
+  // Галерия
   const imgs = [
     "IMG_1822.jpeg","IMG_1825.jpeg","IMG_1826.jpeg","IMG_1827.jpeg",
     "IMG_1828.jpeg","IMG_1832.jpeg","IMG_1834.jpeg","IMG_1839.jpeg",
     "IMG_1841.jpeg","IMG_1843.jpeg","IMG_1844.jpeg","IMG_1845.jpeg","IMG_1846.jpeg"
   ];
-
   const gal = document.getElementById('gal');
   imgs.forEach(name=>{
     const a = document.createElement('a');
-    a.href = `images/${name}`;
-    a.dataset.full = `images/${name}`;
+    a.href = `images/${name}`; a.dataset.full = `images/${name}`;
     const img = new Image();
-    img.src = `images/${name}`;
-    img.alt = "";
-    img.loading = "lazy";
-    a.appendChild(img);
-    gal.appendChild(a);
+    img.src = `images/${name}`; img.alt=""; img.loading="lazy";
+    a.appendChild(img); gal.appendChild(a);
   });
 
   // Lightbox
   const lb = document.createElement('div');
   lb.className = 'lb';
-  lb.innerHTML = '<img alt=""><div class="close">×</div>';
+  lb.innerHTML = '<img alt="">';
   document.body.appendChild(lb);
   const lbImg = lb.querySelector('img');
 
-  // отваряне при клик на плочка
   gal.addEventListener('click', (e)=>{
-    const a = e.target.closest('a');
-    if(!a) return;
-    e.preventDefault();
-    lbImg.src = a.dataset.full;
-    lb.classList.add('show');
+    const a = e.target.closest('a'); if(!a) return;
+    e.preventDefault(); lbImg.src = a.dataset.full; lb.classList.add('show');
   });
-
-  // затваряне при клик или Escape
   lb.addEventListener('click', ()=> lb.classList.remove('show'));
-  document.addEventListener('keydown', (e)=>{
-    if(e.key === 'Escape') lb.classList.remove('show');
-  });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') lb.classList.remove('show') });
 </script>
 </body>
 </html>
