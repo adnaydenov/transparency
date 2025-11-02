@@ -2,10 +2,11 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title id="t">Transparency</title>
 <style>
-  html{ -webkit-text-size-adjust:100% !important; text-size-adjust:100% !important; }
+  html{ -webkit-text-size-adjust:100% !important; text-size-adjust:100% !important; box-sizing:border-box }
+  *,*:before,*:after{ box-sizing:inherit }
   body{
     font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
     margin:0; background:#0f0f10; color:#f3f3f3;
@@ -20,17 +21,24 @@
   .lang{ font-size:.95rem; opacity:.9; margin-bottom:8px }
   .lang a{ margin-right:10px }
 
-  /* Галерия – еднакви прагове на всички езици */
-  .gallery{ display:grid; gap:10px; margin:18px 0 32px; grid-template-columns:repeat(1,1fr) }
-  @media (min-width:640px){ .gallery{ grid-template-columns:repeat(2,1fr) } }
-  @media (min-width:720px){ .gallery{ grid-template-columns:repeat(3,1fr) } }
-  @media (min-width:1100px){ .gallery{ grid-template-columns:repeat(4,1fr) } }
-
+  /* --- Галерия: чист Flexbox, твърдо 3 колони --- */
+  .gallery{
+    display:flex;
+    flex-wrap:wrap;
+    margin:-5px;          /* за равни отстъпи */
+  }
+  .gallery a{
+    width:33.3333%;
+    padding:5px;
+    display:block;
+  }
   .gallery img{
-    width:100%; height:100%;
-    aspect-ratio:4/3; object-fit:cover;
-    border-radius:8px; display:block;
-    background:#1b1b1b; cursor:zoom-in;
+    display:block;
+    width:100%;
+    height:auto;          /* няма принуда за височина → стабилно навсякъде */
+    border-radius:8px;
+    background:#1b1b1b;
+    cursor:zoom-in;
   }
 
   /* Lightbox */
@@ -46,8 +54,8 @@
 <body>
 <main>
   <div class="lang">
-    <a href="?lang=en&v=4">English</a>
-    <a href="?lang=bg&v=4">Български</a>
+    <a href="?lang=en&v=6">English</a>
+    <a href="?lang=bg&v=6">Български</a>
   </div>
 
   <h1 id="h1"></h1>
@@ -73,8 +81,8 @@
     lang = (navigator.language||'en').toLowerCase().startsWith('bg') ? 'bg' : 'en';
   }
 
-  // Текстове (кеш-бъстър v=4)
-  fetch(`lang/${lang}.json?v=4`)
+  // Текстове (кеш-бъстър v=6)
+  fetch(`lang/${lang}.json?v=6`)
     .then(r=>r.json())
     .then(tr=>{
       document.documentElement.lang = lang;
