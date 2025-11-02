@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title id="t">Transparency</title>
+<style>
+  body{font-family:-apple-system,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:0;background:#0f0f10;color:#f3f3f3}
+  main{max-width:860px;margin:0 auto;padding:24px}
+  h1{font-size:2.2rem;line-height:1.15;margin:12px 0 16px}
+  h2{margin:18px 0 10px}
+  p{font-size:1.1rem;line-height:1.6;margin:0 0 14px}
+  a{color:#a9c7ff;text-decoration:underline}
+  .hr{height:1px;background:#2a2a2a;margin:20px 0}
+  .gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:10px;margin:18px 0 32px}
+  .gallery img{width:100%;height:auto;border-radius:8px;display:block;background:#1b1b1b}
+  .lang{font-size:.95rem;opacity:.9;margin-bottom:8px}
+  .lang a{margin-right:10px}
+</style>
+</head>
+<body>
+<main>
+  <div class="lang">
+    <a href="?lang=en">English</a>
+    <a href="?lang=bg">Български</a>
+  </div>
+
+  <h1 id="h1"></h1>
+  <p id="p1"></p>
+  <p id="p2"></p>
+
+  <div class="hr"></div>
+
+  <h2 id="h2"></h2>
+  <p id="p3"></p>
+  <p id="p4"></p>
+
+  <p><a id="cta" href="#" target="_blank" rel="noopener"></a></p>
+
+  <div id="gal" class="gallery"></div>
+</main>
+
+<script>
+  // 1) Определи език: ?lang=bg|en -> иначе детектира от браузъра
+  const qp = new URLSearchParams(location.search);
+  let lang = (qp.get('lang')||'').toLowerCase();
+  if(!['bg','en'].includes(lang)){
+    lang = (navigator.language||'en').toLowerCase().startsWith('bg') ? 'bg' : 'en';
+  }
+
+  // 2) Зареди съответния JSON с текстове
+  fetch(`lang/${lang}.json`)
+    .then(r=>r.json())
+    .then(tr=>{
+      document.documentElement.lang = lang;
+      document.title = tr.meta_title;
+      t.textContent = tr.meta_title; // optional
+      h1.textContent = tr.h1;
+      p1.textContent = tr.p1;
+      p2.textContent = tr.p2;
+      h2.textContent = tr.h2;
+      p3.textContent = tr.p3;
+      p4.textContent = tr.p4;
+      const a = document.getElementById('cta');
+      a.textContent = tr.cta_text;
+      a.href = tr.cta_url;
+    });
+
+  // 3) Генерирай галерия от списък с файлове
+  const imgs = [
+    "IMG_1822.jpeg","IMG_1825.jpeg","IMG_1826.jpeg","IMG_1827.jpeg",
+    "IMG_1828.jpeg","IMG_1832.jpeg","IMG_1834.jpeg","IMG_1839.jpeg",
+    "IMG_1841.jpeg","IMG_1843.jpeg","IMG_1844.jpeg","IMG_1845.jpeg","IMG_1846.jpeg"
+  ];
+  const gal = document.getElementById('gal');
+  imgs.forEach(name=>{
+    const img = new Image();
+    img.src = `images/${name}`;
+    img.alt = "";
+    gal.appendChild(img);
+  });
+</script>
+</body>
+</html>
