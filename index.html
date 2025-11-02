@@ -21,24 +21,25 @@
   .lang{ font-size:.95rem; opacity:.9; margin-bottom:8px }
   .lang a{ margin-right:10px }
 
-  /* --- Галерия: чист Flexbox, твърдо 3 колони --- */
+  /* Галерия: Flex 3 в ред + фиксирано 4:3 за равни плочки */
   .gallery{
-    display:flex;
-    flex-wrap:wrap;
-    margin:-5px;          /* за равни отстъпи */
+    display:flex; flex-wrap:wrap; margin:-5px;
   }
-  .gallery a{
-    width:33.3333%;
-    padding:5px;
-    display:block;
+  .gallery .tile{
+    width:33.3333%; padding:5px; display:block; text-decoration:none;
   }
-  .gallery img{
-    display:block;
-    width:100%;
-    height:auto;          /* няма принуда за височина → стабилно навсякъде */
-    border-radius:8px;
+  /* Рамка с фиксирана височина по съотношение 4:3 */
+  .thumb{
+    position:relative; width:100%;
+    padding-top:75%;            /* 4:3 = 0.75 */
+    border-radius:8px; overflow:hidden;
     background:#1b1b1b;
     cursor:zoom-in;
+  }
+  .thumb img{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover; display:block;
   }
 
   /* Lightbox */
@@ -54,8 +55,8 @@
 <body>
 <main>
   <div class="lang">
-    <a href="?lang=en&v=6">English</a>
-    <a href="?lang=bg&v=6">Български</a>
+    <a href="?lang=en&v=7">English</a>
+    <a href="?lang=bg&v=7">Български</a>
   </div>
 
   <h1 id="h1"></h1>
@@ -81,8 +82,8 @@
     lang = (navigator.language||'en').toLowerCase().startsWith('bg') ? 'bg' : 'en';
   }
 
-  // Текстове (кеш-бъстър v=6)
-  fetch(`lang/${lang}.json?v=6`)
+  // Текстове (кеш-бъстър v=7)
+  fetch(`lang/${lang}.json?v=7`)
     .then(r=>r.json())
     .then(tr=>{
       document.documentElement.lang = lang;
@@ -107,10 +108,12 @@
   const gal = document.getElementById('gal');
   imgs.forEach(name=>{
     const a = document.createElement('a');
-    a.href = `images/${name}`; a.dataset.full = `images/${name}`;
+    a.href = `images/${name}`; a.className = 'tile'; a.dataset.full = `images/${name}`;
+    const wrap = document.createElement('div');
+    wrap.className = 'thumb';
     const img = new Image();
     img.src = `images/${name}`; img.alt=""; img.loading="lazy";
-    a.appendChild(img); gal.appendChild(a);
+    wrap.appendChild(img); a.appendChild(wrap); gal.appendChild(a);
   });
 
   // Lightbox
@@ -121,7 +124,7 @@
   const lbImg = lb.querySelector('img');
 
   gal.addEventListener('click', (e)=>{
-    const a = e.target.closest('a'); if(!a) return;
+    const a = e.target.closest('a.tile'); if(!a) return;
     e.preventDefault(); lbImg.src = a.dataset.full; lb.classList.add('show');
   });
   lb.addEventListener('click', ()=> lb.classList.remove('show'));
